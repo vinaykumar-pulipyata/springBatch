@@ -17,9 +17,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 
+import static com.springBatch.pokemon.constants.PokemonColumnConstants.*;
 import com.springBatch.pokemon.entity.Pokemon;
 import com.springBatch.pokemon.processor.FirePokemonProcessor;
+import com.springBatch.pokemon.processor.LegendaryPokemonProcessor;
 import com.springBatch.pokemon.processor.PokemonProcessor;
+import com.springBatch.pokemon.processor.WaterPokemonProcessor;
 import com.springBatch.pokemon.repository.PokemonRepository;
 
 @Configuration
@@ -49,8 +52,8 @@ public class PokemonBatchConfig {
 		DelimitedLineTokenizer lineTokenizerForPokemon = new DelimitedLineTokenizer();
 		lineTokenizerForPokemon.setDelimiter(",");
 		lineTokenizerForPokemon.setStrict(false);
-		lineTokenizerForPokemon.setNames("Id", "Name", "Type 1", "Type 2", "Total", "HP", "Attack", "Defense",
-				"Special Attack", "Special Defense", "Speed", "Generation", "Legendary");
+		lineTokenizerForPokemon.setNames(ID, NAME, TYPE_1, TYPE_2, TOTAL, HP, ATTACK, DEFENSE, SPECIAL_ATTACK,
+				SPECIAL_DEFENSE, SPEED, GENERATION, LEGENDARY);
 
 		BeanWrapperFieldSetMapper<Pokemon> fieldSetMapperForPokemon = new BeanWrapperFieldSetMapper<>();
 		fieldSetMapperForPokemon.setTargetType(Pokemon.class);
@@ -72,6 +75,16 @@ public class PokemonBatchConfig {
 	}
 	
 	@Bean
+	public WaterPokemonProcessor waterPokemonProcessor() {
+		return new WaterPokemonProcessor();
+	}
+	
+	@Bean
+	public LegendaryPokemonProcessor legendaryPokemonProcessor() {
+		return new LegendaryPokemonProcessor();
+	}
+	
+	@Bean
 	public RepositoryItemWriter<Pokemon> pokemonWriter() {
 		RepositoryItemWriter<Pokemon> pokemonItemWriter = new RepositoryItemWriter<>();
 		pokemonItemWriter.setRepository(pokemonRepository);
@@ -81,13 +94,40 @@ public class PokemonBatchConfig {
 
 	@Bean
 	public Step stepToFetchPokemon() {
-		return stepBuilderFactory.get("pokemon-step").<Pokemon, Pokemon>chunk(10)
+		return stepBuilderFactory.get("pokemon-All").<Pokemon, Pokemon>chunk(10)
 				.reader(pokemonReader())
 				.processor(pokemonProcessor())
 				.writer(pokemonWriter())
 				.build();
 	}
 
+	@Bean
+	public Step stepToFetchFirePokemon() {
+		return stepBuilderFactory.get("pokemon-Fire").<Pokemon, Pokemon>chunk(10)
+				.reader(pokemonReader())
+				.processor(firePokemonProcessor())
+				.writer(pokemonWriter())
+				.build();
+	}
+	
+	@Bean
+	public Step stepToFetchWaterPokemon() {
+		return stepBuilderFactory.get("pokemon-Water").<Pokemon, Pokemon>chunk(10)
+				.reader(pokemonReader())
+				.processor(waterPokemonProcessor())
+				.writer(pokemonWriter())
+				.build();
+	}
+	
+	@Bean
+	public Step stepToFetchLegendaryPokemon() {
+		return stepBuilderFactory.get("pokemon-Legendary").<Pokemon, Pokemon>chunk(10)
+				.reader(pokemonReader())
+				.processor(legendaryPokemonProcessor())
+				.writer(pokemonWriter())
+				.build();
+	}
+	
 	@Bean
 	@Qualifier("All-Pokemon")
 	public Job jobToFetchPokemon() {
@@ -98,19 +138,28 @@ public class PokemonBatchConfig {
 	}
 	
 	@Bean
-	public Step stepToFetchFirePokemon() {
-		return stepBuilderFactory.get("pokemon-step").<Pokemon, Pokemon>chunk(10)
-				.reader(pokemonReader())
-				.processor(firePokemonProcessor())
-				.writer(pokemonWriter())
-				.build();
-	}
-	
-	@Bean
 	@Qualifier("Fire-Pokemon")
 	public Job jobToFetchFirePokemon() {
 		return jobBuilderFactory.get("fetchAllFirePokemon")
 				.flow(stepToFetchFirePokemon())
+				.end()
+				.build();
+	}
+	
+	@Bean
+	@Qualifier("Water-Pokemon")
+	public Job jobToFetchWaterPokemon() {
+		return jobBuilderFactory.get("fetchAllWaterPokemon")
+				.flow(stepToFetchWaterPokemon())
+				.end()
+				.build();
+	}
+	
+	@Bean
+	@Qualifier("Legendary-Pokemon")
+	public Job jobToFetchLegendaryPokemon() {
+		return jobBuilderFactory.get("fetchAllLegendaryPokemon")
+				.flow(stepToFetchLegendaryPokemon())
 				.end()
 				.build();
 	}

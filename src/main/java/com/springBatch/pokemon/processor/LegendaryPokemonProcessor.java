@@ -4,10 +4,14 @@ import org.springframework.batch.item.ItemProcessor;
 
 import com.springBatch.pokemon.entity.Pokemon;
 
-public class PokemonProcessor implements ItemProcessor<Pokemon, Pokemon> {
+public class LegendaryPokemonProcessor implements ItemProcessor<Pokemon, Pokemon> {
 
 	@Override
 	public Pokemon process(Pokemon pokemon) throws Exception {
-		return pokemon;
+		if ("TRUE".equals(pokemon.getLegendary())) {
+			return pokemon;
+		}
+		return null;
 	}
 }
+

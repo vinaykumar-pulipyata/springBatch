@@ -38,13 +38,21 @@ public class PokemonController {
 	@Qualifier("Legendary-Pokemon")
 	private Job jobLegendary;
 
+	@Autowired
+	@Qualifier("Fetch-All-Pokemon")
+	private Job jobFetchPokemon;
+	
+	@Autowired
+	@Qualifier("Fetch-All-Fire-Pokemon")
+	private Job jobFetchFirePokemon;
+	
 	@GetMapping("welcome")
 	public String welcome() {
 		return "Pokemon - Gotta catch em all!!";
 	}
 
-	@PostMapping("fetchAll")
-	public String fetchAllPokemon() {
+	@PostMapping("loadAll")
+	public String loadAllPokemon() {
 		JobParameters jobParameter = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis())
 				.toJobParameters();
 		try {
@@ -57,8 +65,8 @@ public class PokemonController {
 		return "Added all pokemons to DB";
 	}
 
-	@PostMapping("fetchAllFirePokemon")
-	public String fetchAllFirePokemon() {
+	@PostMapping("loadAllFirePokemon")
+	public String loadAllFirePokemon() {
 		JobParameters jobParameter = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis())
 				.toJobParameters();
 		try {
@@ -71,8 +79,8 @@ public class PokemonController {
 		return "Added Fire Pokemons to DB";
 	}
 
-	@PostMapping("fetchAllWaterPokemon")
-	public String fetchAllWaterPokemon() {
+	@PostMapping("loadAllWaterPokemon")
+	public String loadAllWaterPokemon() {
 		JobParameters jobParameter = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis())
 				.toJobParameters();
 		try {
@@ -85,8 +93,8 @@ public class PokemonController {
 		return "Added Water Pokemons to DB";
 	}
 
-	@PostMapping("fetchAllLegendaryPokemon")
-	public String fetchAllLegendaryPokemon() {
+	@PostMapping("loadAllLegendaryPokemon")
+	public String loadAllLegendaryPokemon() {
 		JobParameters jobParameter = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis())
 				.toJobParameters();
 		try {
@@ -97,5 +105,33 @@ public class PokemonController {
 			return "Error in Job";
 		}
 		return "Added Legendary Pokemons to DB";
+	}
+	
+	@PostMapping("fetchAll")
+	public String fetchAllPokemon() {
+		JobParameters jobParameter = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis())
+				.toJobParameters();
+		try {
+			jobLauncher.run(jobFetchPokemon, jobParameter);
+		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
+				| JobParametersInvalidException e) {
+			e.printStackTrace();
+			return "Error in Job";
+		}
+		return "Fetched Pokemons from DB";
+	}
+	
+	@PostMapping("fetchAllFirePokemon")
+	public String fetchAllFirePokemon() {
+		JobParameters jobParameter = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis())
+				.toJobParameters();
+		try {
+			jobLauncher.run(jobFetchFirePokemon, jobParameter);
+		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
+				| JobParametersInvalidException e) {
+			e.printStackTrace();
+			return "Error in Job";
+		}
+		return "Fetched Pokemons from DB";
 	}
 }

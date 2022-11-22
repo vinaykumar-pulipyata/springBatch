@@ -1,6 +1,6 @@
 package com.springBatch.pokemon.constants;
 
-public final class PokemonColumnConstants {
+public final class PokemonCSVColumnConstants {
 
 	public static final String ID = "Id";
 	public static final String NAME = "Name";

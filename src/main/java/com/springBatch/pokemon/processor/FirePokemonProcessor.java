@@ -2,7 +2,7 @@ package com.springBatch.pokemon.processor;
 
 import org.springframework.batch.item.ItemProcessor;
 
-import static com.springBatch.pokemon.constants.PokemonTypeConstant.*;
+import static com.springBatch.pokemon.constants.PokemonTypeConstants.*;
 import com.springBatch.pokemon.entity.Pokemon;
 
 public class FirePokemonProcessor implements ItemProcessor<Pokemon, Pokemon> {

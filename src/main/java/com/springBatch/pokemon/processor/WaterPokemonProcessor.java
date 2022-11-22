@@ -1,6 +1,6 @@
 package com.springBatch.pokemon.processor;
 
-import static com.springBatch.pokemon.constants.PokemonTypeConstant.*;
+import static com.springBatch.pokemon.constants.PokemonTypeConstants.*;
 
 import org.springframework.batch.item.ItemProcessor;
 

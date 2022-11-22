@@ -1,6 +1,6 @@
 package com.springBatch.pokemon.constants;
 
-public final class PokemonTypeConstant {
+public final class PokemonTypeConstants {
 
 	public static final String FIRE = "Fire";
 	public static final String GRASS = "Grass";
